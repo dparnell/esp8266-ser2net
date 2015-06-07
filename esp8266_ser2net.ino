@@ -3,6 +3,7 @@
  */
 
 //#define BONJOUR_SUPPORT
+#define USE_WDT
 
 #include <ESP8266WiFi.h>
 #ifdef BONJOUR_SUPPORT
@@ -99,6 +100,9 @@ void connect_to_wifi() {
   
   // Wait for WIFI connection
   while (WiFi.status() != WL_CONNECTED) {
+#ifdef USE_WDT
+    wdt_reset();
+#endif
     pwm.set(0, (count & 1) ? PWM_MAX_DUTY : 0);
     count++;
     delay(250);
@@ -125,6 +129,10 @@ void error() {
 
 void setup(void)
 {  
+#ifdef USE_WDT
+  wdt_enable(1000);
+#endif
+
   digitalWrite(WIFI_LED, LOW);
 #ifdef CONNECTION_LED  
   digitalWrite(CONNECTION_LED, LOW);
@@ -167,10 +175,14 @@ int pulse_counter = 1;
 
 void loop(void)
 {
-  int bytes_read;
+  size_t bytes_read;
   uint8_t net_buf[BUFFER_SIZE];
   uint8_t serial_buf[BUFFER_SIZE];
   
+#ifdef USE_WDT
+  wdt_reset();
+#endif
+
   if(WiFi.status() != WL_CONNECTED) {
     // we've lost the connection, so we need to reconnect
     if(client) {
@@ -244,12 +256,11 @@ void loop(void)
     
     if(bytes_read > 0) {  
       digitalWrite(RX_LED, HIGH);
-      client.write(serial_buf, bytes_read);
+      client.write((const uint8_t*)serial_buf, bytes_read);
       client.flush();
     } else {
       digitalWrite(RX_LED, LOW);
     }
-    
   } else {
     // make sure the TX and RX LEDs aren't on
     digitalWrite(TX_LED, LOW);
