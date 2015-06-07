@@ -2,7 +2,7 @@
   ESP8266 PWM code for Arduino by Daniel Parnell 2nd of May 2015
   
   This code is butchered from the official ESP8266 SDK to make it work in a more Arduino like way.
-  It also allows any GPIO ping to be used for PWM, rather than the hard coded 3 pins in the original.  
+  It also allows any GPIO pin to be used for PWM, rather than the hard coded 3 pins in the original.  
 */
 #ifndef __ESP8266_pwm_h__
 #define __ESP8266_pwm_h__
