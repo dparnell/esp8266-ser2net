@@ -233,7 +233,7 @@ void loop(void)
     digitalWrite(CONNECTION_LED, HIGH);
 #endif
   }
-
+#define min(a,b) ((a)<(b)?(a):(b))
   if(client.connected()) {
     // check the network for any bytes to send to the serial
     int count = client.available();
